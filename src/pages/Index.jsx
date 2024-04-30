@@ -6,6 +6,7 @@ import { client } from "lib/crud";
 const Index = () => {
   const [bloodSugar, setBloodSugar] = useState("");
   const [records, setRecords] = useState([]);
+  const [editingRecord, setEditingRecord] = useState(null);
   const toast = useToast();
 
   useEffect(() => {
@@ -68,7 +69,8 @@ const Index = () => {
           Diabetes Management App
         </Heading>
         <Text>Log and track your blood sugar levels.</Text>
-        <Input placeholder="Enter your blood sugar level" value={bloodSugar} onChange={(e) => setBloodSugar(e.target.value)} />
+        <Input placeholder="Enter your blood sugar level" value={editingRecord ? editingRecord.bloodSugar : bloodSugar} onChange={(e) => setBloodSugar(e.target.value)} />
+        {editingRecord && <Input type="datetime-local" value={new Date(editingRecord.date).toISOString().slice(0, 16)} onChange={(e) => setEditingRecord({ ...editingRecord, date: new Date(e.target.value).toISOString() })} />}
         <Menu>
           <MenuButton as={Button} rightIcon={<FaChevronDown />}>
             Calculate A1c
@@ -107,6 +109,7 @@ const Index = () => {
               };
               const handleEdit = () => {
                 setBloodSugar(record.bloodSugar);
+                setEditingRecord(record);
               };
               return (
                 <ListItem key={index}>
@@ -123,8 +126,12 @@ const Index = () => {
             })}
           </List>
         ) : (
-          <Box border="1px" borderColor="gray.200" p={4}>
-            <Text>Graph view is not implemented yet.</Text>
+          <Box border="1px" borderColor="gray.200" p={4} position="relative" height="200px">
+            {records.map((record, index) => {
+              const x = (index / records.length) * 100;
+              const y = (1 - record.bloodSugar / 300) * 100;
+              return <Box position="absolute" left={`${x}%`} bottom={`${y}%`} width="10px" height="10px" bg="blue.500" borderRadius="50%" />;
+            })}
           </Box>
         )}
       </VStack>
