@@ -59,6 +59,8 @@ const Index = () => {
     setRecords([...records].sort((a, b) => new Date(b.date) - new Date(a.date)));
   };
 
+  const [viewMode, setViewMode] = useState("list");
+
   return (
     <Container centerContent p={4}>
       <VStack spacing={4} align="stretch">
@@ -82,44 +84,49 @@ const Index = () => {
           Add Record
         </Button>
         <Button onClick={sortRecords}>Sort History</Button>
+        <Button onClick={() => setViewMode(viewMode === "list" ? "graph" : "list")}>{viewMode === "list" ? "Show Graph" : "Show List"}</Button>
         <Heading as="h2" size="lg">
           History
         </Heading>
-        <List spacing={3}>
-          {records.map((record, index) => {
-            const handleDelete = async () => {
-              const success = await client.delete(`record:${record.date}`);
-              if (success) {
-                const updatedRecords = records.filter((r) => r.date !== record.date);
-                setRecords(updatedRecords);
-                toast({
-                  title: "Record deleted",
-                  description: "The record has been successfully deleted.",
-                  status: "info",
-                  duration: 2000,
-                  isClosable: true,
-                });
-              }
-            };
-
-            const handleEdit = () => {
-              setBloodSugar(record.bloodSugar);
-            };
-
-            return (
-              <ListItem key={index}>
-                <ListIcon as={FaCheckCircle} color="green.500" />
-                {`Level: ${record.bloodSugar}, Date: ${new Date(record.date).toLocaleString()}`}
-                <Button size="sm" colorScheme="blue" onClick={handleEdit} ml={2}>
-                  Edit
-                </Button>
-                <Button size="sm" colorScheme="red" onClick={handleDelete} ml={2}>
-                  Delete
-                </Button>
-              </ListItem>
-            );
-          })}
-        </List>
+        {viewMode === "list" ? (
+          <List spacing={3}>
+            {records.map((record, index) => {
+              const handleDelete = async () => {
+                const success = await client.delete(`record:${record.date}`);
+                if (success) {
+                  const updatedRecords = records.filter((r) => r.date !== record.date);
+                  setRecords(updatedRecords);
+                  toast({
+                    title: "Record deleted",
+                    description: "The record has been successfully deleted.",
+                    status: "info",
+                    duration: 2000,
+                    isClosable: true,
+                  });
+                }
+              };
+              const handleEdit = () => {
+                setBloodSugar(record.bloodSugar);
+              };
+              return (
+                <ListItem key={index}>
+                  <ListIcon as={FaCheckCircle} color="green.500" />
+                  {`Level: ${record.bloodSugar}, Date: ${new Date(record.date).toLocaleString()}`}
+                  <Button size="sm" colorScheme="blue" onClick={handleEdit} ml={2}>
+                    Edit
+                  </Button>
+                  <Button size="sm" colorScheme="red" onClick={handleDelete} ml={2}>
+                    Delete
+                  </Button>
+                </ListItem>
+              );
+            })}
+          </List>
+        ) : (
+          <Box border="1px" borderColor="gray.200" p={4}>
+            <Text>Graph view is not implemented yet.</Text>
+          </Box>
+        )}
       </VStack>
     </Container>
   );
