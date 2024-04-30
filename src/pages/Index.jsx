@@ -60,7 +60,7 @@ const Index = () => {
     setRecords([...records].sort((a, b) => new Date(b.date) - new Date(a.date)));
   };
 
-  const [viewMode, setViewMode] = useState("list");
+  const [viewMode, setViewMode] = useState("graph");
 
   return (
     <Container centerContent p={4}>
@@ -126,11 +126,30 @@ const Index = () => {
             })}
           </List>
         ) : (
-          <Box border="1px" borderColor="gray.200" p={4} position="relative" height="200px">
+          <Box border="1px" borderColor="gray.200" p={4} position="relative" height="200px" width="100%">
+            <Text position="absolute" left="0" bottom="-20px">
+              0
+            </Text>
+            <Text position="absolute" right="0" bottom="-20px">
+              Records
+            </Text>
+            <Text position="absolute" left="-30px" top="0">
+              300
+            </Text>
+            <Text position="absolute" left="-10px" bottom="0">
+              0
+            </Text>
             {records.map((record, index) => {
               const x = (index / records.length) * 100;
               const y = (1 - record.bloodSugar / 300) * 100;
-              return <Box position="absolute" left={`${x}%`} bottom={`${y}%`} width="10px" height="10px" bg="blue.500" borderRadius="50%" />;
+              return (
+                <>
+                  <Box position="absolute" left={`${x}%`} bottom={`${y}%`} width="10px" height="10px" bg="blue.500" borderRadius="50%" />
+                  <Text position="absolute" left={`${x}%`} bottom={`${y - 10}%`} fontSize="xs">
+                    {record.bloodSugar}
+                  </Text>
+                </>
+              );
             })}
           </Box>
         )}
