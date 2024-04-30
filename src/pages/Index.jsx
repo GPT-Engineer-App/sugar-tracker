@@ -66,25 +66,6 @@ const Index = () => {
 
   useEffect(() => {
     if (viewMode === "graph" && graphRef.current) {
-      const svg = d3.select(graphRef.current).append("svg").attr("width", "100%").attr("height", "100%");
-
-      const xScale = d3
-        .scaleTime()
-        .domain(d3.extent(records, (record) => new Date(record.date)))
-        .range([0, graphRef.current.clientWidth]);
-
-      const yScale = d3
-        .scaleLinear()
-        .domain([0, d3.max(records, (record) => record.bloodSugar)])
-        .range([graphRef.current.clientHeight, 0]);
-
-      const line = d3
-        .line()
-        .x((record) => xScale(new Date(record.date)))
-        .y((record) => yScale(record.bloodSugar))
-        .curve(d3.curveMonotoneX);
-
-      svg.append("path").datum(records).attr("fill", "none").attr("stroke", "blue").attr("stroke-width", 2).attr("d", line);
     }
   }, [records, viewMode]);
 };
