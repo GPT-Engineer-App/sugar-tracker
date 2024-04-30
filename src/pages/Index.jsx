@@ -139,18 +139,32 @@ const Index = () => {
             <Text position="absolute" left="-10px" bottom="0">
               0
             </Text>
-            {records.map((record, index) => {
-              const x = (index / records.length) * 100;
-              const y = (1 - record.bloodSugar / 300) * 100;
-              return (
-                <>
-                  <Box position="absolute" left={`${x}%`} bottom={`${y}%`} width="10px" height="10px" bg="blue.500" borderRadius="50%" />
-                  <Text position="absolute" left={`${x}%`} bottom={`${y - 10}%`} fontSize="xs">
-                    {record.bloodSugar}
-                  </Text>
-                </>
-              );
-            })}
+            <svg width="100%" height="100%" style={{ position: "absolute", top: "0", left: "0" }}>
+              <polyline
+                points={records
+                  .map((record, index) => {
+                    const x = (index / records.length) * 100;
+                    const y = (1 - record.bloodSugar / 300) * 100;
+                    return `${x},${y}`;
+                  })
+                  .join(" ")}
+                fill="none"
+                stroke="blue"
+                strokeWidth="2"
+              />
+              {records.map((record, index) => {
+                const x = (index / records.length) * 100;
+                const y = (1 - record.bloodSugar / 300) * 100;
+                return (
+                  <>
+                    <circle cx={`${x}%`} cy={`${y}%`} r="5" fill="blue.500" />
+                    <text x={`${x}%`} y={`${y - 10}%`} fontSize="xs" fill="black">
+                      {record.bloodSugar}
+                    </text>
+                  </>
+                );
+              })}
+            </svg>
           </Box>
         )}
       </VStack>
