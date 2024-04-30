@@ -86,12 +86,39 @@ const Index = () => {
           History
         </Heading>
         <List spacing={3}>
-          {records.map((record, index) => (
-            <ListItem key={index}>
-              <ListIcon as={FaCheckCircle} color="green.500" />
-              {`Level: ${record.bloodSugar}, Date: ${new Date(record.date).toLocaleString()}`}
-            </ListItem>
-          ))}
+          {records.map((record, index) => {
+            const handleDelete = async () => {
+              const success = await client.delete(`record:${record.date}`);
+              if (success) {
+                const updatedRecords = records.filter((r) => r.date !== record.date);
+                setRecords(updatedRecords);
+                toast({
+                  title: "Record deleted",
+                  description: "The record has been successfully deleted.",
+                  status: "info",
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }
+            };
+
+            const handleEdit = () => {
+              setBloodSugar(record.bloodSugar);
+            };
+
+            return (
+              <ListItem key={index}>
+                <ListIcon as={FaCheckCircle} color="green.500" />
+                {`Level: ${record.bloodSugar}, Date: ${new Date(record.date).toLocaleString()}`}
+                <Button size="sm" colorScheme="blue" onClick={handleEdit} ml={2}>
+                  Edit
+                </Button>
+                <Button size="sm" colorScheme="red" onClick={handleDelete} ml={2}>
+                  Delete
+                </Button>
+              </ListItem>
+            );
+          })}
         </List>
       </VStack>
     </Container>
